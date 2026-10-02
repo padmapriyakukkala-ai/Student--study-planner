@@ -24,17 +24,17 @@ function addTask() {
     }
 
     let list = document.getElementById("taskList");
-let item = document.createElement("li");
 
-let checkbox = document.createElement("input");
-checkbox.type = "checkbox";
+    let item = document.createElement("li");
 
-let text = document.createElement("span");
-text.textContent = task;
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
 
-item.appendChild(checkbox);
-item.appendChild(text);
-    
+    let text = document.createElement("span");
+    text.textContent = task;
+
+    item.appendChild(checkbox);
+    item.appendChild(text);
 
     list.appendChild(item);
 
