@@ -15,3 +15,20 @@ function addSubject() {
 
     document.getElementById("subject").value = "";
 }
+function addTask() {
+    let task = document.getElementById("task").value;
+
+    if (task === "") {
+        alert("Please enter a study task.");
+        return;
+    }
+
+    let list = document.getElementById("taskList");
+
+    let item = document.createElement("li");
+    item.textContent = task;
+
+    list.appendChild(item);
+
+    document.getElementById("task").value = "";
+}
