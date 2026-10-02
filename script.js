@@ -33,6 +33,9 @@ function addTask() {
     let text = document.createElement("span");
     text.textContent = task;
 
+    checkbox.style.flexShrink = "0";
+    text.style.flex = "1";
+
     item.appendChild(checkbox);
     item.appendChild(text);
 
