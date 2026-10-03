@@ -32,16 +32,6 @@ function addTask() {
 
     let text = document.createElement("span");
     text.textContent = task;
-    checkbox.addEventListener("change", function() {
-    if (checkbox.checked) {
-        text.style.textDecoration = "line-through";
-    } else {
-        text.style.textDecoration = "none";
-    }
-});
-
-    checkbox.style.flexShrink = "0";
-    text.style.flex = "1";
 
     item.appendChild(checkbox);
     item.appendChild(text);
