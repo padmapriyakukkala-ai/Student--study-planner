@@ -212,4 +212,95 @@ bar.style.flexShrink = "0";
 
 renderProgressChart();
 
+const scheduleForm = document.getElementById("scheduleForm");
+const scheduleList = document.getElementById("scheduleList");
+const scheduleDay = document.getElementById("scheduleDay");
+const scheduleTime = document.getElementById("scheduleTime");
+const scheduleSubject = document.getElementById("scheduleSubject");
+const dayTabs = document.getElementById("dayTabs");
+
+let schedules = JSON.parse(
+    localStorage.getItem("plannerSchedules") || "[]"
+);
+
+let selectedDay = "Monday";
+
+function renderSchedule() {
+    scheduleList.replaceChildren();
+
+    const daySchedules = schedules
+        .filter(item => item.day === selectedDay)
+        .sort((a, b) => a.time.localeCompare(b.time));
+
+    if (daySchedules.length === 0) {
+        const message = document.createElement("li");
+        message.textContent = "No study sessions planned for " + selectedDay + ".";
+        scheduleList.appendChild(message);
+    }
+
+    daySchedules.forEach(item => {
+        const li = document.createElement("li");
+        const text = document.createElement("span");
+        const del = document.createElement("button");
+
+        text.textContent = item.time + " — " + item.subject;
+        del.textContent = "Delete";
+        del.type = "button";
+        del.className = "delete-btn";
+
+        del.addEventListener("click", () => {
+            schedules = schedules.filter(s => s.id !== item.id);
+            localStorage.setItem("plannerSchedules", JSON.stringify(schedules));
+            renderSchedule();
+        });
+
+        li.append(text, del);
+        scheduleList.appendChild(li);
+    });
+}
+
+scheduleForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const subject = scheduleSubject.value.trim();
+    const time = scheduleTime.value;
+    const day = scheduleDay.value;
+
+    if (!subject || !time) {
+        alert("Please enter a subject and study time.");
+        return;
+    }
+
+    schedules.push({
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        day,
+        time,
+        subject
+    });
+
+    localStorage.setItem("plannerSchedules", JSON.stringify(schedules));
+
+    selectedDay = day;
+    dayTabs.querySelectorAll(".day-btn").forEach(button => {
+        button.classList.toggle("active", button.dataset.day === selectedDay);
+    });
+
+    renderSchedule();
+    scheduleSubject.value = "";
+});
+
+dayTabs.querySelectorAll(".day-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        selectedDay = button.dataset.day;
+
+        dayTabs.querySelectorAll(".day-btn").forEach(tab => {
+            tab.classList.toggle("active", tab === button);
+        });
+
+        renderSchedule();
+    });
+});
+
+renderSchedule();
+            
     
