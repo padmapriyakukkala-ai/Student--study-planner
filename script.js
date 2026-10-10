@@ -196,9 +196,11 @@ function renderProgressChart() {
         const bar = document.createElement("div");
         bar.className = "bar";
         bar.style.height = Math.max(
-            4,
-            (item.value / total) * 90
-        ) + "px";
+    4,
+    (item.value / total) * 90
+) + "px";
+
+bar.style.flexShrink = "0";
 
         const label = document.createElement("span");
         label.textContent = item.label;
