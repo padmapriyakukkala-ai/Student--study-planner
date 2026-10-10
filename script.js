@@ -66,6 +66,7 @@ function updateProgress() {
     completedCount.textContent = completed;
     progressFill.style.width = percent + "%";
     progressText.textContent = "Your progress: " + percent + "%";
+    renderProgressChart();
 }
 
 function renderTasks() {
@@ -163,4 +164,50 @@ examForm.addEventListener("submit", event => {
 renderSubjects();
 renderTasks();
 renderExams();
+
+function renderProgressChart() {
+    const chartArea = document.getElementById("chartArea");
+
+    if (!chartArea) return;
+
+    chartArea.replaceChildren();
+
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.done).length;
+    const remaining = total - completed;
+
+    if (total === 0) {
+        chartArea.textContent = "Add tasks to see your progress chart.";
+        return;
+    }
+
+    const data = [
+        { label: "Completed", value: completed },
+        { label: "Remaining", value: remaining }
+    ];
+
+    data.forEach(item => {
+        const column = document.createElement("div");
+        column.className = "bar-column";
+
+        const number = document.createElement("strong");
+        number.textContent = item.value;
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = Math.max(
+            4,
+            (item.value / total) * 90
+        ) + "px";
+
+        const label = document.createElement("span");
+        label.textContent = item.label;
+
+        column.append(number, bar, label);
+        chartArea.appendChild(column);
+    });
+}
+
+renderProgressChart();
+
     
