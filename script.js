@@ -212,6 +212,209 @@ bar.style.flexShrink = "0";
 
 renderProgressChart();
 
+/* AUTOMATIC STUDY PLAN GENERATOR */
+
+const autoPlanDate = document.getElementById("planDate");
+const autoPlanHours = document.getElementById("planHours");
+const autoPlanButton = document.getElementById("generatePlan");
+const autoPlanList = document.getElementById("autoPlanList");
+const autoPlanMessage = document.getElementById("planMessage");
+
+const autoPlanStorageKey = "plannerAutomaticPlan";
+
+function autoPlanLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+autoPlanDate.value = autoPlanLocalDate(new Date());
+
+function generateAutomaticStudyPlan() {
+    autoPlanList.replaceChildren();
+
+    if (subjects.length === 0) {
+        autoPlanMessage.textContent =
+            "Please add your subjects in My Subjects first.";
+        return;
+    }
+
+    if (exams.length === 0) {
+        autoPlanMessage.textContent =
+            "Please add exam names and dates in Exam Dates first.";
+        return;
+    }
+
+    const chosenDate = autoPlanDate.value;
+
+    if (!chosenDate) {
+        autoPlanMessage.textContent = "Please choose a planning date.";
+        return;
+    }
+
+    // Match exam names to subjects.
+    // Use the same name in My Subjects and Exam Dates.
+    const examMap = new Map();
+
+    exams.forEach(exam => {
+        const key = exam.name.trim().toLowerCase();
+
+        if (!examMap.has(key) || exam.date < examMap.get(key)) {
+            examMap.set(key, exam.date);
+        }
+    });
+
+    const orderedSubjects = subjects
+        .map((subject, index) => ({
+            name: subject,
+            originalIndex: index,
+            examDate: examMap.get(subject.trim().toLowerCase()) || "9999-12-31"
+        }))
+        .sort((a, b) =>
+            a.examDate.localeCompare(b.examDate) ||
+            a.originalIndex - b.originalIndex
+        );
+
+    const studyMinutes = Number(autoPlanHours.value) * 60;
+    const sessionCount = Math.min(
+        orderedSubjects.length,
+        Math.floor(studyMinutes / 30)
+    );
+
+    const plan = [];
+
+    for (let i = 0; i < sessionCount; i++) {
+        const subject = orderedSubjects[i];
+
+        let activity = "Revise important concepts";
+
+        if (i % 3 === 1) {
+            activity = "Practice questions";
+        } else if (i % 3 === 2) {
+            activity = "Review notes and mistakes";
+        }
+
+        plan.push({
+            subject: subject.name,
+            activity,
+            minutes: 30,
+            done: false
+        });
+    }
+
+    // If there are fewer subjects than sessions,
+    // use the remaining time for revision.
+    let remainingMinutes = studyMinutes -
+        plan.reduce((sum, item) => sum + item.minutes, 0);
+
+    let extraIndex = 0;
+
+    while (remainingMinutes >= 30 && orderedSubjects.length > 0) {
+        const subject = orderedSubjects[
+            extraIndex % orderedSubjects.length
+        ];
+
+        plan.push({
+            subject: subject.name,
+            activity: "Revision and practice",
+            minutes: 30,
+            done: false
+        });
+
+        remainingMinutes -= 30;
+        extraIndex++;
+    }
+
+    const saved = {
+        date: chosenDate,
+        items: plan
+    };
+
+    localStorage.setItem(
+        autoPlanStorageKey,
+        JSON.stringify(saved)
+    );
+
+    displayAutomaticStudyPlan(saved);
+
+    autoPlanMessage.textContent =
+        "Your plan is ready! Complete each session as you study.";
+}
+
+function displayAutomaticStudyPlan(plan) {
+    autoPlanList.replaceChildren();
+
+    if (!plan || !Array.isArray(plan.items) || plan.items.length === 0) {
+        autoPlanMessage.textContent = "No sessions in this plan yet.";
+        return;
+    }
+
+    plan.items.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.style.display = "flex";
+        li.style.alignItems = "flex-start";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = item.done;
+        checkbox.style.marginTop = "5px";
+
+        const details = document.createElement("div");
+        details.style.flex = "1";
+
+        const heading = document.createElement("strong");
+        heading.textContent = item.subject;
+
+        const description = document.createElement("p");
+        description.style.margin = "6px 0 0";
+        description.textContent =
+            item.activity + " · " + item.minutes + " minutes";
+
+        if (item.done) {
+            heading.style.textDecoration = "line-through";
+            description.style.opacity = "0.65";
+        }
+
+        checkbox.addEventListener("change", () => {
+            item.done = checkbox.checked;
+
+            localStorage.setItem(
+                autoPlanStorageKey,
+                JSON.stringify(plan)
+            );
+
+            displayAutomaticStudyPlan(plan);
+        });
+
+        details.append(heading, description);
+        li.append(checkbox, details);
+        autoPlanList.appendChild(li);
+    });
+
+    const finished = plan.items.filter(item => item.done).length;
+
+    autoPlanMessage.textContent =
+        "Completed " + finished + " of " + plan.items.length +
+        " study sessions.";
+}
+
+autoPlanButton.addEventListener(
+    "click",
+    generateAutomaticStudyPlan
+);
+
+// Restore today's previously saved plan, if available.
+const savedAutomaticPlan = JSON.parse(
+    localStorage.getItem(autoPlanStorageKey) || "null"
+);
+
+if (savedAutomaticPlan &&
+    savedAutomaticPlan.date === autoPlanDate.value) {
+    displayAutomaticStudyPlan(savedAutomaticPlan);
+            }
+
+
 const scheduleForm = document.getElementById("scheduleForm");
 const scheduleList = document.getElementById("scheduleList");
 const scheduleDay = document.getElementById("scheduleDay");
