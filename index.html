@@ -2,284 +2,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Study Planner</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudySpace | Student Planner</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f5fc;
-            margin: 0;
-            padding: 0;
-            color: #263554;
-        }
-
-        header {
-            background: linear-gradient(135deg, #243b64, #7462c8);
-            color: white;
-            padding: 35px 20px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0 0 10px;
-            font-size: 30px;
-        }
-
-        header p {
-            color: #e8eaff;
-            margin: 0;
-        }
-
-        main {
-            max-width: 900px;
-            margin: 25px auto;
-            padding: 0 18px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 22px;
-        }
-
-        .stat, .card {
-            background: white;
-            padding: 22px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(35, 50, 90, 0.07);
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat strong {
-            display: block;
-            font-size: 27px;
-            color: #6555bd;
-            margin-bottom: 7px;
-        }
-
-        .stat span {
-            font-size: 13px;
-            color: #758098;
-        }
-
-        .card {
-            margin-bottom: 22px;
-        }
-
-        h2 {
-            color: #243b64;
-            margin-top: 0;
-            font-size: 21px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        input[type="text"],
-        input[type="date"] {
-            flex: 1;
-            min-width: 0;
-            padding: 12px;
-            border: 1px solid #d5dbea;
-            border-radius: 8px;
-            font-size: 15px;
-            background: white;
-        }
-
-        button {
-            padding: 12px 16px;
-            border: none;
-            border-radius: 8px;
-            background: #344b86;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #5948ad;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0 0;
-        }
-
-        li {
-            background: #f8f9ff;
-            margin-top: 10px;
-            padding: 13px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
-            overflow-wrap: anywhere;
-        }
-
-        li input[type="checkbox"] {
-            width: 19px;
-            height: 19px;
-            flex-shrink: 0;
-            accent-color: #6555bd;
-        }
-
-        li span {
-            flex: 1;
-            min-width: 0;
-            overflow-wrap: anywhere;
-        }
-
-        li span.done {
-            text-decoration: line-through;
-            color: #8992a5;
-        }
-
-        .delete-btn {
-            background: #ffeded;
-            color: #b53340;
-            padding: 8px 10px;
-        }
-
-        .progress-track {
-            height: 11px;
-            background: #e7e9f5;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #6555bd, #54bba4);
-            transition: width 0.3s;
-        }
-
-        .muted, .empty {
-            color: #7b859a;
-            font-size: 14px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #7b859a;
-            font-size: 13px;
-        }
-
-        @media (max-width: 520px) {
-            header h1 {
-                font-size: 25px;
-            }
-
-            .stats {
-                gap: 8px;
-            }
-
-            .stat {
-                padding: 15px 5px;
-            }
-
-            .stat strong {
-                font-size: 22px;
-            }
-
-            .stat span {
-                font-size: 11px;
-            }
-
-            .form-row button {
-                width: 100%;
-            }
-
-            .card {
-                padding: 17px;
-            }
-        }
-    </style>
+<style>
+:root {
+    --purple: #7254d6;
+    --purple-dark: #4d35a3;
+    --light: #f5f2ff;
+    --text: #292344;
+    --muted: #88839d;
+    --white: #ffffff;
+    --border: #ece8f7;
+    --green: #29a879;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background: #f8f7fc;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+    width: 230px;
+    background: white;
+    border-right: 1px solid var(--border);
+    padding: 26px 18px;
+    flex-shrink: 0;
+}
+.logo { font-size: 22px; font-weight: bold; color: var(--purple); margin-bottom: 35px; }
+.logo span { color: var(--text); }
+.nav-label { font-size: 11px; color: var(--muted); margin: 22px 10px 10px; text-transform: uppercase; }
+.nav-link {
+    display: block;
+    padding: 13px 12px;
+    margin: 5px 0;
+    color: #69647e;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 14px;
+}
+.nav-link:hover, .nav-link.active { background: var(--light); color: var(--purple-dark); font-weight: bold; }
+main { flex: 1; min-width: 0; padding: 28px; max-width: 1250px; margin: 0 auto; width: 100%; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 26px; }
+.topbar h1 { font-size: 25px; margin: 0 0 7px; }
+.muted { color: var(--muted); font-size: 13px; }
+.avatar { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: #e7dfff; font-size: 22px; }
+.welcome {
+    background: linear-gradient(120deg, #7254d6, #a28beb);
+    color: white; padding: 27px; border-radius: 18px;
+    display: flex; justify-content: space-between; align-items: center; gap: 15px;
+    margin-bottom: 22px;
+}
+.welcome h2 { margin: 0 0 10px; font-size: 24px; }
+.welcome p { margin: 0; color: #f0ebff; font-size: 14px; line-height: 1.6; }
+.welcome-icon { font-size: 52px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 15px; margin-bottom: 22px; }
+.stat, .card { background: white; padding: 20px; border-radius: 15px; border: 1px solid #f0edf8; box-shadow: 0 5px 20px #44326b08; }
+.stat-icon { font-size: 22px; margin-bottom: 13px; }
+.stat strong { display: block; font-size: 27px; margin-bottom: 7px; }
+.stat small { color: var(--muted); font-size: 12px; }
+.grid { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 18px; }
+.card { margin-bottom: 18px; scroll-margin-top: 20px; }
+.card h2 { font-size: 17px; margin: 0 0 6px; }
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 18px; }
+form .fields { display: flex; flex-wrap: wrap; gap: 9px; }
+input, select {
+    min-width: 0; flex: 1; width: 100%; padding: 11px;
+    border: 1px solid #e3deef; border-radius: 9px;
+    background: white; color: var(--text);
+}
+.btn {
+    border: 0; border-radius: 9px; padding: 11px 15px;
+    background: var(--purple); color: white; font-weight: bold;
+}
+.btn:hover { background: var(--purple-dark); }
+.btn-light { background: var(--light); color: var(--purple-dark); }
+.btn-light:hover { background: #e9e1ff; }
+.list { list-style: none; padding: 0; margin: 15px 0 0; }
+.list li {
+    padding: 12px; background: #faf9fe; border-radius: 10px;
+    display: flex; align-items: center; gap: 9px; margin-top: 9px;
+    overflow-wrap: anywhere;
+}
+.list li span { flex: 1; min-width: 0; }
+.list input[type="checkbox"] { width: 18px; flex: 0 0 18px; accent-color: var(--purple); }
+.done { text-decoration: line-through; color: #9992ad; }
+.delete-btn { background: #fff0f1; color: #bd4455; border: 0; padding: 7px 9px; border-radius: 7px; }
+.progress-track { height: 9px; background: #eeeaf7; border-radius: 10px; overflow: hidden; margin: 15px 0 8px; }
+.progress-fill { height: 100%; width: 0; background: linear-gradient(90deg,#7254d6,#46c6a0); transition: width .3s; }
+.timer { text-align: center; padding: 12px 0; }
+.timer-display { font-size: 46px; font-weight: bold; color: var(--purple-dark); margin: 16px 0; font-variant-numeric: tabular-nums; }
+.timer-actions { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.day-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin: 15px 0; }
+.day-btn { border: 1px solid var(--border); background: white; border-radius: 8px; padding: 8px 10px; color: var(--text); }
+.day-btn.active { background: var(--purple); color: white; }
+.badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+.badge-item { text-align: center; background: #faf8ff; padding: 13px 9px; border-radius: 10px; flex: 1; min-width: 85px; font-size: 12px; }
+.badge-item .emoji { font-size: 27px; margin-bottom: 7px; }
+.badge-item.locked { opacity: .4; filter: grayscale(1); }
+.exam-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.exam-days { color: var(--purple); font-size: 12px; font-weight: bold; white-space: nowrap; }
+.chart-area { display: flex; align-items: end; gap: 12px; height: 130px; padding-top: 15px; }
+.bar-column { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: end; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+.bar { width: 100%; max-width: 35px; min-height: 4px; background: #c7b9f6; border-radius: 7px 7px 2px 2px; }
+.bar.today { background: var(--purple); }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 10px; }
+@media(max-width:900px) {
+    .sidebar { width: 190px; }
+    .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .grid { grid-template-columns: 1fr; }
+}
+@media(max-width:600px) {
+    .layout { display: block; }
+    .sidebar { width: 100%; padding: 15px; border-right: 0; border-bottom: 1px solid var(--border); }
+    .logo { margin-bottom: 12px; }
+    .nav-label { display: none; }
+    .nav-links { display: flex; overflow-x: auto; gap: 5px; }
+    .nav-link { white-space: nowrap; padding: 10px; margin: 0; }
+    main { padding: 17px 13px; }
+    .welcome { padding: 20px; }
+    .welcome h2 { font-size: 20px; }
+    .welcome-icon { font-size: 37px; }
+    .topbar h1 { font-size: 21px; }
+    .stat, .card { padding: 15px; }
+    .stat strong { font-size: 23px; }
+}
+</style>
 </head>
 
 <body>
+<div class="layout">
+<aside class="sidebar">
+    <div class="logo">✦ <span>StudySpace</span></div>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav-links">
+        <a class="nav-link active" href="#dashboard">🏠 Dashboard</a>
+        <a class="nav-link" href="#subjects">📚 Subjects</a>
+        <a class="nav-link" href="#tasks">✅ Study tasks</a>
+        <a class="nav-link" href="#timetable">🗓️ Timetable</a>
+        <a class="nav-link" href="#focus">⏱️ Focus timer</a>
+        <a class="nav-link" href="#rewards">🏆 Rewards</a>
+        <a class="nav-link" href="#exams">📅 Exams</a>
+    </nav>
+</aside>
 
-<header>
-    <h1>📚 Student Study Planner</h1>
-    <p>Plan your studies and track your progress.</p>
-</header>
+<main id="dashboard">
+    <div class="topbar">
+        <div>
+            <h1>My Dashboard ✨</h1>
+            <div class="muted" id="todayText">Your personal study space</div>
+        </div>
+        <div class="avatar">🎓</div>
+    </div>
 
-<main>
+    <section class="welcome">
+        <div>
+            <h2>Small steps, big success! 💜</h2>
+            <p>Welcome to your study space.<br>Plan today, stay consistent, and celebrate your progress.</p>
+        </div>
+        <div class="welcome-icon">📖</div>
+    </section>
+
     <section class="stats">
-        <div class="stat">
-            <strong id="subjectCount">0</strong>
-            <span>My Subjects</span>
-        </div>
-
-        <div class="stat">
-            <strong id="taskCount">0</strong>
-            <span>Total Tasks</span>
-        </div>
-
-        <div class="stat">
-            <strong id="completedCount">0</strong>
-            <span>Completed</span>
-        </div>
+        <div class="stat"><div class="stat-icon">📚</div><strong id="subjectCount">0</strong><small>My Subjects</small></div>
+        <div class="stat"><div class="stat-icon">✅</div><strong id="taskCount">0</strong><small>Total Tasks</small></div>
+        <div class="stat"><div class="stat-icon">⭐</div><strong id="pointsCount">0</strong><small>Study Points</small></div>
+        <div class="stat"><div class="stat-icon">🔥</div><strong id="streakCount">0</strong><small>Day Streak</small></div>
     </section>
 
-    <section class="card">
-        <h2>📖 My Subjects</h2>
-        <form id="subjectForm" class="form-row">
-            <input type="text" id="subject"
-                   placeholder="Enter subject" maxlength="100" required>
-            <button type="submit">+ Add Subject</button>
-        </form>
-        <ul id="subjectList"></ul>
-    </section>
+    <div class="grid">
+        <div>
+            <section class="card" id="subjects">
+                <div class="card-head"><div><h2>📚 My Subjects</h2><div class="muted">Keep your learning organized</div></div></div>
+                <form id="subjectForm"><div class="fields">
+                    <input type="text" id="subject" placeholder="Enter subject" maxlength="100" required>
+                    <button class="btn" type="submit">+ Add</button>
+                </div></form>
+                <ul class="list" id="subjectList"></ul>
+            </section>
 
-    <section class="card">
-        <h2>✅ Study Tasks</h2>
-        <form id="taskForm" class="form-row">
-            <input type="text" id="task"
-                   placeholder="Enter study task" maxlength="200" required>
-            <button type="submit">+ Add Task</button>
-        </form>
+            <section class="card" id="tasks">
+                <div class="card-head"><div><h2>✅ Study Tasks</h2><div class="muted">Every completed task earns 10 points</div></div></div>
+                <form id="taskForm"><div class="fields">
+                    <input type="text" id="task" placeholder="What do you need to study?" maxlength="200" required>
+                    <button class="btn" type="submit">+ Add</button>
+                </div></form>
+                <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+                <div class="muted" id="progressText">Your progress: 0%</div>
+                <ul class="list" id="taskList"></ul>
+            </section>
 
-        <div class="progress-track">
-            <div class="progress-fill" id="progressFill"></div>
+            <section class="card" id="timetable">
+                <div class="card-head"><div><h2>🗓️ Weekly Timetable</h2><div class="muted">Plan your study sessions</div></div></div>
+                <form id="scheduleForm">
+                    <div class="fields">
+                        <select id="scheduleDay" required>
+                            <option value="Monday">Monday</option><option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option><option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                        <input id="scheduleTime" type="time" aria-label="Study time" required>
+                    </div>
+                    <div class="fields" style="margin-top:9px">
+                        <input id="scheduleSubject" placeholder="Subject or activity" maxlength="100" required>
+                        <button class="btn" type="submit">+ Plan</button>
+                    </div>
+                </form>
+                <div class="day-tabs" id="dayTabs">
+                    <button type="button" class="day-btn active" data-day="Monday">Mon</button>
+                    <button type="button" class="day-btn" data-day="Tuesday">Tue</button>
+                    <button type="button" class="day-btn" data-day="Wednesday">Wed</button>
+                    <button type="button" class="day-btn" data-day="Thursday">Thu</button>
+                    <button type="button" class="day-btn" data-day="Friday">Fri</button>
+                    <button type="button" class="day-btn" data-day="Saturday">Sat</button>
+                    <button type="button" class="day-btn" data-day="Sunday">Sun</button>
+                </div>
+                <ul class="list" id="scheduleList"></ul>
+            </section>
         </div>
-        <p class="muted" id="progressText">Your progress: 0%</p>
-        <ul id="taskList"></ul>
-    </section>
 
-    <section class="card">
-        <h2>📅 Exam Dates</h2>
-        <form id="examForm" class="form-row">
-            <input type="text" id="examName"
-                   placeholder="Enter exam name" maxlength="100" required>
-            <input type="date" id="examDate" required>
-            <button type="submit">+ Add Exam</button>
-        </form>
-        <ul id="examList"></ul>
-    </section>
+        <div>
+            <section class="card" id="focus">
+                <h2>⏱️ Focus Timer</h2>
+                <div class="muted">Focus on one thing at a time</div>
+                <div class="timer">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="muted" id="timerLabel">Focus session</div>
+                    <div class="timer-actions" style="margin-top:16px">
+                        <button class="btn" type="button" id="timerStart">▶ Start</button>
+                        <button class="btn btn-light" type="button" id="timerReset">↺ Reset</button>
+                    </div>
+                    <div class="timer-actions" style="margin-top:10px">
+                        <button class="btn btn-light" type="button" id="focusMode">25 min focus</button>
+                        <button class="btn btn-light" type="button" id="breakMode">5 min break</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card" id="rewards">
+                <div class="card-head"><div><h2>🏆 My Achievements</h2><div class="muted">Celebrate your progress</div></div></div>
+                <div class="muted" id="badgeSummary">Complete tasks to unlock badges.</div>
+                <div class="badges" id="badgeList">
+                    <div class="badge-item locked"><div class="emoji">🌱</div>First Step</div>
+                    <div class="badge-item locked"><div class="emoji">⭐</div>Task Star</div>
+                    <div class="badge-item locked"><div class="emoji">🏆</div>Study Champ</div>
+                </div>
+            </section>
+
+            <section class="card" id="exams">
+                <div class="card-head"><div><h2>📅 Exam Countdown</h2><div class="muted">Your important dates</div></div></div>
+                <form id="examForm">
+                    <div class="fields"><input id="examName" placeholder="Exam name" maxlength="100" required></div>
+                    <div class="fields" style="margin-top:9px">
+                        <input id="examDate" type="date" aria-label="Exam date" required>
+                        <button class="btn" type="submit">+ Add</button>
+                    </div>
+                </form>
+                <ul class="list" id="examList"></ul>
+            </section>
+
+            <section class="card" id="charts">
+                <h2>📊 My Progress</h2>
+                <div class="muted">Tasks completed vs remaining</div>
+                <div class="chart-area" id="chartArea">
+                    <div class="muted">Add tasks to see your progress chart.</div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>Made with 💜 for your learning journey</footer>
 </main>
-
-<footer>Made with ❤️ for better studying</footer>
+</div>
 
 <script src="script.js"></script>
-
 </body>
-    </html>
-
+                                                               </html>
+                                                               
