@@ -1,233 +1,166 @@
 
-const STORAGE_KEY = "studentStudyPlannerData";
+const subjectForm = document.getElementById("subjectForm");
+const subjectInput = document.getElementById("subject");
+const subjectList = document.getElementById("subjectList");
+const subjectCount = document.getElementById("subjectCount");
 
-function loadData() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+const taskForm = document.getElementById("taskForm");
+const taskInput = document.getElementById("task");
+const taskList = document.getElementById("taskList");
+const taskCount = document.getElementById("taskCount");
+const completedCount = document.getElementById("completedCount");
+const progressFill = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
 
-        if (saved &&
-            Array.isArray(saved.subjects) &&
-            Array.isArray(saved.tasks) &&
-            Array.isArray(saved.exams)) {
-            return saved;
-        }
-    } catch (error) {
-        console.log("Starting with an empty planner.");
-    }
+const examForm = document.getElementById("examForm");
+const examName = document.getElementById("examName");
+const examDate = document.getElementById("examDate");
+const examList = document.getElementById("examList");
 
-    return {
-        subjects: [],
-        tasks: [],
-        exams: []
-    };
-}
-
-let data = loadData();
+let subjects = JSON.parse(localStorage.getItem("plannerSubjects") || "[]");
+let tasks = JSON.parse(localStorage.getItem("plannerTasks") || "[]");
+let exams = JSON.parse(localStorage.getItem("plannerExams") || "[]");
 
 function saveData() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-        alert("Unable to save data in this browser.");
-    }
+    localStorage.setItem("plannerSubjects", JSON.stringify(subjects));
+    localStorage.setItem("plannerTasks", JSON.stringify(tasks));
+    localStorage.setItem("plannerExams", JSON.stringify(exams));
 }
 
-function safe(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[character]);
+function makeItem(text, deleteAction) {
+    const li = document.createElement("li");
+    const span = document.createElement("span");
+    const del = document.createElement("button");
+
+    span.textContent = text;
+    del.textContent = "Delete";
+    del.className = "delete-btn";
+    del.type = "button";
+    del.addEventListener("click", deleteAction);
+
+    li.append(span, del);
+    return li;
 }
 
-function makeId() {
-    return Date.now().toString() +
-        Math.random().toString(36).slice(2);
+function renderSubjects() {
+    subjectList.replaceChildren();
+    subjectCount.textContent = subjects.length;
+
+    subjects.forEach((subject, index) => {
+        subjectList.appendChild(
+            makeItem(subject, () => {
+                subjects.splice(index, 1);
+                saveData();
+                renderSubjects();
+            })
+        );
+    });
 }
 
-// Add subject
-document.getElementById("subjectForm").addEventListener("submit", event => {
-    event.preventDefault();
+function updateProgress() {
+    const completed = tasks.filter(task => task.done).length;
+    const total = tasks.length;
+    const percent = total === 0 ? 0 : Math.round(completed / total * 100);
 
-    const input = document.getElementById("subject");
-    const name = input.value.trim();
+    taskCount.textContent = total;
+    completedCount.textContent = completed;
+    progressFill.style.width = percent + "%";
+    progressText.textContent = "Your progress: " + percent + "%";
+}
 
-    if (!name) return;
+function renderTasks() {
+    taskList.replaceChildren();
 
-    if (data.subjects.some(s =>
-        s.name.toLowerCase() === name.toLowerCase())) {
-        alert("This subject is already added.");
-        return;
-    }
+    tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        const checkbox = document.createElement("input");
+        const span = document.createElement("span");
+        const del = document.createElement("button");
 
-    data.subjects.push({
-        id: makeId(),
-        name: name
+        checkbox.type = "checkbox";
+        checkbox.checked = task.done;
+        span.textContent = task.text;
+
+        if (task.done) span.classList.add("done");
+
+        checkbox.addEventListener("change", () => {
+            tasks[index].done = checkbox.checked;
+            saveData();
+            renderTasks();
+        });
+
+        del.textContent = "Delete";
+        del.className = "delete-btn";
+        del.type = "button";
+        del.addEventListener("click", () => {
+            tasks.splice(index, 1);
+            saveData();
+            renderTasks();
+        });
+
+        li.append(checkbox, span, del);
+        taskList.appendChild(li);
     });
 
-    input.value = "";
-    saveData();
-    render();
-});
+    updateProgress();
+}
 
-// Add task
-document.getElementById("taskForm").addEventListener("submit", event => {
-    event.preventDefault();
+function renderExams() {
+    examList.replaceChildren();
 
-    const input = document.getElementById("task");
-    const name = input.value.trim();
-
-    if (!name) return;
-
-    data.tasks.push({
-        id: makeId(),
-        name: name,
-        completed: false
+    exams.forEach((exam, index) => {
+        examList.appendChild(
+            makeItem(exam.name + " — " + exam.date, () => {
+                exams.splice(index, 1);
+                saveData();
+                renderExams();
+            })
+        );
     });
+}
 
-    input.value = "";
+subjectForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const value = subjectInput.value.trim();
+
+    if (!value) return;
+
+    subjects.push(value);
     saveData();
-    render();
+    renderSubjects();
+    subjectInput.value = "";
+    subjectInput.focus();
 });
 
-// Add exam date
-document.getElementById("examForm").addEventListener("submit", event => {
+taskForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const value = taskInput.value.trim();
+
+    if (!value) return;
+
+    tasks.push({ text: value, done: false });
+    saveData();
+    renderTasks();
+    taskInput.value = "";
+    taskInput.focus();
+});
+
+examForm.addEventListener("submit", event => {
     event.preventDefault();
 
-    const name = document.getElementById("examName").value.trim();
-    const date = document.getElementById("examDate").value;
+    const name = examName.value.trim();
+    const date = examDate.value;
 
     if (!name || !date) return;
 
-    data.exams.push({
-        id: makeId(),
-        name: name,
-        date: date
-    });
-
-    document.getElementById("examName").value = "";
-    document.getElementById("examDate").value = "";
-
+    exams.push({ name, date });
     saveData();
-    render();
+    renderExams();
+    examName.value = "";
+    examDate.value = "";
 });
 
-// Tick and untick tasks
-document.addEventListener("change", event => {
-    if (!event.target.matches("[data-task-id]")) return;
-
-    const task = data.tasks.find(
-        t => t.id === event.target.dataset.taskId
-    );
-
-    if (task) {
-        task.completed = event.target.checked;
-        saveData();
-        render();
-    }
-});
-
-// Delete subjects, tasks or exams
-document.addEventListener("click", event => {
-    const button = event.target.closest("[data-delete-type]");
-    if (!button) return;
-
-    const id = button.dataset.id;
-    const type = button.dataset.deleteType;
-
-    if (type === "subject") {
-        data.subjects = data.subjects.filter(s => s.id !== id);
-    }
-
-    if (type === "task") {
-        data.tasks = data.tasks.filter(t => t.id !== id);
-    }
-
-    if (type === "exam") {
-        data.exams = data.exams.filter(e => e.id !== id);
-    }
-
-    saveData();
-    render();
-});
-
-function render() {
-    const completed = data.tasks.filter(t => t.completed).length;
-
-    const percentage = data.tasks.length
-        ? Math.round(completed / data.tasks.length * 100)
-        : 0;
-
-    document.getElementById("subjectCount").textContent =
-        data.subjects.length;
-
-    document.getElementById("taskCount").textContent =
-        data.tasks.length;
-
-    document.getElementById("completedCount").textContent =
-        completed;
-
-    document.getElementById("progressFill").style.width =
-        percentage + "%";
-
-    document.getElementById("progressText").textContent =
-        "Your progress: " + percentage + "% (" +
-        completed + " of " + data.tasks.length + " completed)";
-
-    // Show subjects
-    document.getElementById("subjectList").innerHTML =
-        data.subjects.length
-            ? data.subjects.map(s => `
-                <li>
-                    <span>📘 ${safe(s.name)}</span>
-                    <button type="button" class="delete-btn"
-                        data-delete-type="subject"
-                        data-id="${safe(s.id)}">Delete</button>
-                </li>
-            `).join("")
-            : '<li class="empty">Add your first subject!</li>';
-
-    // Show study tasks
-    document.getElementById("taskList").innerHTML =
-        data.tasks.length
-            ? data.tasks.map(t => `
-                <li>
-                    <input type="checkbox"
-                        data-task-id="${safe(t.id)}"
-                        aria-label="Mark task complete"
-                        ${t.completed ? "checked" : ""}>
-                    <span class="${t.completed ? "done" : ""}">
-                        ${safe(t.name)}
-                    </span>
-                    <button type="button" class="delete-btn"
-                        data-delete-type="task"
-                        data-id="${safe(t.id)}">Delete</button>
-                </li>
-            `).join("")
-            : '<li class="empty">Add your first study task!</li>';
-
-    // Show exams in date order
-    const exams = [...data.exams].sort(
-        (a, b) => a.date.localeCompare(b.date)
-    );
-
-    document.getElementById("examList").innerHTML =
-        exams.length
-            ? exams.map(e => `
-                <li>
-                    <span>📝 ${safe(e.name)}
-                        <br>
-                        <small>${safe(e.date)}</small>
-                    </span>
-                    <button type="button" class="delete-btn"
-                        data-delete-type="exam"
-                        data-id="${safe(e.id)}">Delete</button>
-                </li>
-            `).join("")
-            : '<li class="empty">Add your exam dates!</li>';
-}
-
-render();
-        
+renderSubjects();
+renderTasks();
+renderExams();
+    
