@@ -1,114 +1,285 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Study Planner</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background: #f4f7fb;
+            background: #f3f5fc;
             margin: 0;
-            padding: 30px 20px;
+            padding: 0;
+            color: #263554;
+        }
+
+        header {
+            background: linear-gradient(135deg, #243b64, #7462c8);
+            color: white;
+            padding: 35px 20px;
             text-align: center;
         }
 
-        h1 {
-            color: #243b64;
-            font-size: 32px;
-            margin-top: 30px;
+        header h1 {
+            margin: 0 0 10px;
+            font-size: 30px;
         }
 
-        p {
-            color: #666;
-            font-size: 16px;
+        header p {
+            color: #e8eaff;
+            margin: 0;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .stat, .card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(35, 50, 90, 0.07);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 27px;
+            color: #6555bd;
+            margin-bottom: 7px;
+        }
+
+        .stat span {
+            font-size: 13px;
+            color: #758098;
+        }
+
+        .card {
+            margin-bottom: 22px;
         }
 
         h2 {
             color: #243b64;
-            margin-top: 35px;
+            margin-top: 0;
+            font-size: 21px;
         }
 
-        input {
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            flex: 1;
+            min-width: 0;
             padding: 12px;
-            width: 220px;
-            border: 1px solid #ccc;
+            border: 1px solid #d5dbea;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
+            background: white;
         }
 
         button {
-            padding: 12px 18px;
-            margin-left: 8px;
+            padding: 12px 16px;
             border: none;
             border-radius: 8px;
-            background: #243b64;
+            background: #344b86;
             color: white;
-            font-size: 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5948ad;
         }
 
         ul {
             list-style: none;
             padding: 0;
-            margin-top: 20px;
+            margin: 15px 0 0;
         }
-li {
-    background: white;
-    margin: 12px auto;
-    padding: 16px 18px;
-    max-width: 450px;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-align: left;
-    font-size: 17px;
-}
 
-li input[type="checkbox"] {
-    width: 21px;
-    height: 21px;
-    margin: 0;
-    flex-shrink: 0;
-}
+        li {
+            background: #f8f9ff;
+            margin-top: 10px;
+            padding: 13px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            overflow-wrap: anywhere;
+        }
 
-li span {
-    flex: 1;
-    font-size: 17px;
-}
-        
+        li input[type="checkbox"] {
+            width: 19px;
+            height: 19px;
+            flex-shrink: 0;
+            accent-color: #6555bd;
+        }
+
+        li span {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        li span.done {
+            text-decoration: line-through;
+            color: #8992a5;
+        }
+
+        .delete-btn {
+            background: #ffeded;
+            color: #b53340;
+            padding: 8px 10px;
+        }
+
+        .progress-track {
+            height: 11px;
+            background: #e7e9f5;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6555bd, #54bba4);
+            transition: width 0.3s;
+        }
+
+        .muted, .empty {
+            color: #7b859a;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7b859a;
+            font-size: 13px;
+        }
+
+        @media (max-width: 520px) {
+            header h1 {
+                font-size: 25px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 15px 5px;
+            }
+
+            .stat strong {
+                font-size: 22px;
+            }
+
+            .stat span {
+                font-size: 11px;
+            }
+
+            .form-row button {
+                width: 100%;
+            }
+
+            .card {
+                padding: 17px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <h1>Student Study Planner</h1>
-
+<header>
+    <h1>📚 Student Study Planner</h1>
     <p>Plan your studies and track your progress.</p>
+</header>
 
-    <h2>My Subjects</h2>
+<main>
+    <section class="stats">
+        <div class="stat">
+            <strong id="subjectCount">0</strong>
+            <span>My Subjects</span>
+        </div>
 
-    <input type="text" id="subject" placeholder="Enter subject">
+        <div class="stat">
+            <strong id="taskCount">0</strong>
+            <span>Total Tasks</span>
+        </div>
 
-    <button onclick="addSubject()">Add Subject</button>
+        <div class="stat">
+            <strong id="completedCount">0</strong>
+            <span>Completed</span>
+        </div>
+    </section>
 
-    <ul id="subjectList"></ul>
-    <h2>Study Tasks</h2>
+    <section class="card">
+        <h2>📖 My Subjects</h2>
+        <form id="subjectForm" class="form-row">
+            <input type="text" id="subject"
+                   placeholder="Enter subject" maxlength="100" required>
+            <button type="submit">+ Add Subject</button>
+        </form>
+        <ul id="subjectList"></ul>
+    </section>
 
-<input type="text" id="task" placeholder="Enter study task">
+    <section class="card">
+        <h2>✅ Study Tasks</h2>
+        <form id="taskForm" class="form-row">
+            <input type="text" id="task"
+                   placeholder="Enter study task" maxlength="200" required>
+            <button type="submit">+ Add Task</button>
+        </form>
 
-<button onclick="addTask()">Add Task</button>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="muted" id="progressText">Your progress: 0%</p>
+        <ul id="taskList"></ul>
+    </section>
 
-<ul id="taskList"></ul>
-    <h2> Exam Date</h2>
+    <section class="card">
+        <h2>📅 Exam Dates</h2>
+        <form id="examForm" class="form-row">
+            <input type="text" id="examName"
+                   placeholder="Enter exam name" maxlength="100" required>
+            <input type="date" id="examDate" required>
+            <button type="submit">+ Add Exam</button>
+        </form>
+        <ul id="examList"></ul>
+    </section>
+</main>
 
-<input type="date" id="examDate">
+<footer>Made with ❤️ for better studying</footer>
 
-<button onclick="addExamDate()">Add Exam Date</button>
-
-<ul id="examList"></ul>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
-</html>
+    </html>
+
