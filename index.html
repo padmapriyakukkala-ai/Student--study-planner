@@ -266,6 +266,34 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 10px
                 </form>
                 <ul class="list" id="examList"></ul>
             </section>
+            
+<section class="card" id="autoPlanner">
+    <h2>🗓️ My Automatic Study Plan</h2>
+    <p class="muted">
+        Your 2-hour study plan, prioritizing nearest exams.
+    </p>
+
+    <label for="planDate">Choose planning date:</label>
+    <input type="date" id="planDate"
+           style="display:block;width:100%;margin:12px 0;">
+
+    <label for="planHours">Daily study time:</label>
+    <select id="planHours"
+            style="display:block;width:100%;padding:12px;margin:12px 0;">
+        <option value="2" selected>2 hours</option>
+    </select>
+
+    <button type="button" id="generatePlan">
+        ✨ Generate My Study Plan
+    </button>
+
+    <p id="planMessage" class="muted">
+        Add subjects and exam dates first.
+    </p>
+
+    <ul id="autoPlanList"></ul>
+</section>
+            
 
             <section class="card" id="charts">
                 <h2>📊 My Progress</h2>
